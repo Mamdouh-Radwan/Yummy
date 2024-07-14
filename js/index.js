@@ -151,7 +151,7 @@ $(document).ready(() => {
 //   *****************************************
 
 // setting navbar closed
-$(".nav-bar").animate({ left: -$(".nav-bar").outerWidth() });
+// $(".nav-bar").animate({ left: -$(".nav-bar").outerWidth() });
 $(".nav-bar-close-open .open-close .fa-close").hide();
 $(".nav-list").animate({ top: "300px" });
 // *******************************************
@@ -198,7 +198,7 @@ $(".nav-list").on("click", (e) => {
         .addEventListener("input", async (e) => {
           let response = await searchApi(e.target.value);
           document.querySelector(".searched-meals").innerHTML = "";
-          displayFoundedMealsSearch(response);
+          displayFoundedMealsSearch(response,searchedMeals);
 
           Array.from(document.querySelectorAll(".searched-meal-cont")).forEach(
             (e) => {
@@ -206,7 +206,7 @@ $(".nav-list").on("click", (e) => {
                 let response = await getHomeMeals(
                   e.currentTarget.children[0].children[0].innerHTML
                 );
-                displayCertainMealSearch(response[0]);
+                displayDetails(response[0],searchedMeals);
               });
             }
           );
@@ -222,7 +222,7 @@ $(".nav-list").on("click", (e) => {
 
           let response = await searchApiFL(e.target.value);
           document.querySelector(".searched-meals").innerHTML = "";
-          displayFoundedMealsSearch(response);
+          displayFoundedMealsSearch(response,searchedMeals);
 
           Array.from(document.querySelectorAll(".searched-meal-cont")).forEach(
             (e) => {
@@ -230,7 +230,7 @@ $(".nav-list").on("click", (e) => {
                 let response = await getHomeMeals(
                   e.currentTarget.children[0].children[0].innerHTML
                 );
-                displayCertainMealSearch(response[0]);
+                displayDetails(response[0],searchedMeals);
               });
             }
           );
@@ -250,7 +250,7 @@ $(".nav-list").on("click", (e) => {
             let response = await searchCatMeals(
               e.currentTarget.children[0].children[0].innerHTML
             );
-            displayCatMeals(response);
+            displayMeals(response,allCategories);
             // loop on all meals of same category if meal clicked fetch it and display its details
             Array.from(document.querySelectorAll(".category-cont")).forEach(
               (e) => {
@@ -258,7 +258,7 @@ $(".nav-list").on("click", (e) => {
                   let response = await getHomeMeals(
                     e.currentTarget.children[0].children[0].innerHTML
                   );
-                  displayCertainCatMeal(response[0]);
+                  displayDetails(response[0],allCategories);
                 });
               }
             );
@@ -281,13 +281,13 @@ $(".nav-list").on("click", (e) => {
               e.currentTarget.children[1].innerHTML
             );
             // display all meals in this area
-            displayAreaMeals(response);
+            displayMeals(response,allCategories);
             Array.from(document.querySelectorAll(".area-cont")).forEach((e) => {
               e.addEventListener("click", async (e) => {
                 let response = await getHomeMeals(
                   e.currentTarget.children[0].children[0].innerHTML
                 );
-                displayCertainAreaMeal(response[0]);
+                displayDetails(response[0],allArea);
               });
             });
           });
@@ -307,14 +307,14 @@ $(".nav-list").on("click", (e) => {
               let response = await searchIngrediantmeals(
                 e.currentTarget.children[1].innerHTML
               );
-              displayIngrediantMeals(response);
+              displayMeals(response,allCategories);
               Array.from(document.querySelectorAll(".ingrediant-cont")).forEach(
                 (e) => {
                   e.addEventListener("click", async (e) => {
                     let response = await getHomeMeals(
                       e.currentTarget.children[0].children[0].innerHTML
                     );
-                    displayCertainIngrediantMeal(response[0]);
+                    displayDetails(response[0],allIngrediants);
                   });
                 }
               );
@@ -490,7 +490,6 @@ async function searchApi(name) {
   response = await response.json();
   return response;
 }
-
 async function searchApiFL(letter) {
   let response = await fetch(
     `https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`
@@ -499,7 +498,7 @@ async function searchApiFL(letter) {
   response = await response.json();
   return response;
 }
-function displayFoundedMealsSearch(response) {
+function displayFoundedMealsSearch(response,displayE) {
     $(".loaderPage").show();
   let cartona = "";
   response.meals.forEach((e) => {
@@ -515,77 +514,10 @@ function displayFoundedMealsSearch(response) {
   
   `;
   });
-  searchedMeals.innerHTML =cartona
+  displayE.innerHTML =cartona
   $(".loaderPage").fadeOut(1000);
 }
 
-function displayCertainMealSearch(response) {
-    $(".loaderPage").show();
-  let src = response.strMealThumb;
-  let targetName = response.strMeal;
-  let instructions = response.strInstructions;
-  let area = response.strArea;
-  let category = response.strCategory;
-  let ingrediantArr = [];
-  let measurmentArr = [];
-  let tags = response.strTags;
-  let source = response.strSource;
-  let youtube = response.strYoutube;
-
-  // adding all ingrediants in an array
-  for (let i = 0; i < 20; i++) {
-    if (response[`strIngredient${i + 1}`] === "") {
-      break;
-    }
-    ingrediantArr.push(response[`strIngredient${i + 1}`]);
-  }
-  for (let i = 0; i < 20; i++) {
-    if (response[`strMeasure${i + 1}`] === "") {
-      break;
-    }
-    measurmentArr.push(response[`strMeasure${i + 1}`]);
-  }
-
-  searchedMeals.innerHTML = `
-    <div class="col-12 col-md-5 text-white">
-        <div class="selectedImage">
-        <img class="w-100 rounded-3" src=${src}>
-        </div>
-        <h3>${targetName}</h3>
-        </div>
-        <div class="col-12 col-md-7 text-white">
-        <h3>Instructions</h3>
-        <p>${instructions}</p>
-        <h4>Area:${area}</h4>
-        <h5>Category:${category}</h5>
-        <h5>Recipes :</h5>
-        <div class="recips p-2">
-        <ul class="d-flex flex-wrap justify-content-start align-items-center list-unstyled">${ingrediantArr
-          .map((e, index) => {
-            return `<li class="bg-info p-2 my-3 ms-2 rounded-4 text-center">${measurmentArr[index]}${e}</li>`;
-          })
-          .join("")}
-        </ul>
-        </div>
-        <p>tags:</p>
-        <p>
-        ${
-            tags
-              ? tags
-                  .split(",")
-                  .map((e) => {
-                    return `<p class="fit-content rounded-2 bg-danger-subtle px-2 py-1 ms-2 text-black">${e}</p>`;
-                  })
-                  .join(" ")
-              : ""
-          }</p>
-        <button class="btn btn-primary"><a class="text-decoration-none text-white" href=${source} target="_blank">source</a></button>
-        <button class="btn btn-danger"><a class="text-decoration-none text-white" href=${youtube} target="_blank">youtube</a></button>
-        </div>
-    
-    `;
-    $(".loaderPage").fadeOut(1000);
-}
 // *******************************************
 
 // category tab
@@ -615,104 +547,12 @@ function displayCategories(response) {
   allCategories.innerHTML = cartona;
   $(".loaderPage").fadeOut(1000);
 }
-
 async function searchCatMeals(catName) {
   let response = await fetch(
     `https://www.themealdb.com/api/json/v1/1/filter.php?c=${catName}`
   );
   response = await response.json();
   return response;
-}
-function displayCatMeals(response) {
-    $(".loaderPage").show();
-  let cartona = "";
-  for (let i = 0; i < response.meals.length; i++) {
-    if (i === 20) {
-      break;
-    }
-
-    cartona += `
-<div class="col-md-4 col-lg-3">
-<div class="category-cont position-relative overflow-hidden rounded-3">
-<div class="overlay">
-<h3 class="text-black mb-2">${response.meals[i].strMeal}</h3>
-</div>
-<img class="w-100 h-100" src=${response.meals[i].strMealThumb}>
-</div>
-</div>
-`;
-  }
-  allCategories.innerHTML = cartona;
-  $(".loaderPage").fadeOut(1000);
-}
-function displayCertainCatMeal(response) {
-    $(".loaderPage").show();
-  let src = response.strMealThumb;
-  let targetName = response.strMeal;
-  let instructions = response.strInstructions;
-  let area = response.strArea;
-  let category = response.strCategory;
-  let ingrediantArr = [];
-  let measurmentArr = [];
-  let tags = response.strTags;
-  let source = response.strSource;
-  let youtube = response.strYoutube;
-
-  // adding all ingrediants in an array
-  for (let i = 0; i < 20; i++) {
-    if (response[`strIngredient${i + 1}`] === "") {
-      break;
-    }
-    ingrediantArr.push(response[`strIngredient${i + 1}`]);
-  }
-  for (let i = 0; i < 20; i++) {
-    if (response[`strMeasure${i + 1}`] === "") {
-      break;
-    }
-    measurmentArr.push(response[`strMeasure${i + 1}`]);
-  }
-
-  allCategories.innerHTML = `
-<div class="col-12 col-md-5 text-white">
-    <div class="selectedImage">
-    <img class="w-100 rounded-3" src=${src}>
-    </div>
-    <h3>${targetName}</h3>
-    </div>
-    <div class="col-12 col-md-7 text-white">
-    <h3>Instructions</h3>
-    <p>${instructions}</p>
-    <h4>Area:${area}</h4>
-    <h5>Category:${category}</h5>
-    <h5>Recipes :</h5>
-    <div class="recips p-2">
-    <ul class="d-flex flex-wrap justify-content-start align-items-center list-unstyled">${ingrediantArr
-      .map((e, index) => {
-        return `<li class="bg-info p-2 my-3 ms-2 rounded-4 text-center">${measurmentArr[index]}${e}</li>`;
-      })
-      .join("")}
-    </ul>
-    </div>
-
-    <p>tags:</p>
-    <p>${
-      tags
-        ? tags
-            .split(",")
-            .map((e) => {
-              return `<p class="fit-content rounded-2 bg-danger-subtle px-2 py-1 ms-2 text-black">${e}</p>`;
-            })
-            .join(" ")
-        : ""
-    }</p>
-    <div class="d-flex justify-content-start flex-wrap flex-sm-nowrap">
-    <button class="btn btn-primary ms-2 my-2"><a class="text-decoration-none text-white" href=${source} target="_blank">source</a></button>
-    <button class="btn btn-danger ms-2 my-2"><a class="text-decoration-none text-white" href=${youtube} target="_blank">youtube</a></button>
-    </div>
-    </div>
-
-`;
-$(".loaderPage").fadeOut(1000);
 }
 // **********************************
 
@@ -750,98 +590,6 @@ async function searchAreaMeals(areaName) {
   response = await response.json();
   console.log(response);
   return response;
-}
-function displayAreaMeals(response) {
-    $(".loaderPage").show();
-  let cartona = "";
-  for (let i = 0; i < response.meals.length; i++) {
-    if (i === 20) {
-      break;
-    }
-
-    cartona += `
-<div class="col-md-4 col-lg-3">
-<div class="area-cont position-relative overflow-hidden rounded-3">
-<div class="overlay">
-<h3 class="text-black mb-2">${response.meals[i].strMeal}</h3>
-</div>
-<img class="w-100 h-100" src=${response.meals[i].strMealThumb}>
-</div>
-</div>
-`;
-  }
-  allArea.innerHTML = cartona;
-  $(".loaderPage").fadeOut(1000);
-}
-function displayCertainAreaMeal(response) {
-    $(".loaderPage").show();
-  let src = response.strMealThumb;
-  let targetName = response.strMeal;
-  let instructions = response.strInstructions;
-  let area = response.strArea;
-  let category = response.strCategory;
-  let ingrediantArr = [];
-  let measurmentArr = [];
-  let tags = response.strTags;
-  let source = response.strSource;
-  let youtube = response.strYoutube;
-
-  // adding all ingrediants in an array
-  for (let i = 0; i < 20; i++) {
-    if (response[`strIngredient${i + 1}`] === "") {
-      break;
-    }
-    ingrediantArr.push(response[`strIngredient${i + 1}`]);
-  }
-  for (let i = 0; i < 20; i++) {
-    if (response[`strMeasure${i + 1}`] === "") {
-      break;
-    }
-    measurmentArr.push(response[`strMeasure${i + 1}`]);
-  }
-
-  allArea.innerHTML = `
-    <div class="col-12 col-md-5 text-white">
-        <div class="selectedImage">
-        <img class="w-100 rounded-3" src=${src}>
-        </div>
-        <h3>${targetName}</h3>
-        </div>
-        <div class="col-12 col-md-7 text-white">
-        <h3>Instructions</h3>
-        <p>${instructions}</p>
-        <h4>Area:${area}</h4>
-        <h5>Category:${category}</h5>
-        <h5>Recipes :</h5>
-        <div class="recips p-2 ">
-        <ul class="d-flex flex-wrap justify-content-start align-items-center list-unstyled">${ingrediantArr
-          .map((e, index) => {
-            return `<li class="bg-info p-2 my-3 mx-2 rounded-4 text-center">${measurmentArr[index]}${e}</li>`;
-          })
-          .join("")}
-        </ul>
-        </div>
-        <p>tags:</p>
-        <p>
-        ${
-            tags
-              ? tags
-                  .split(",")
-                  .map((e) => {
-                    return `<p class="fit-content rounded-2 bg-danger-subtle px-2 py-1 ms-2 text-black">${e}</p>`;
-                  })
-                  .join(" ")
-              : ""
-          }
-        </p>
-        <div class="d-flex justify-content-start flex-wrap flex-sm-nowrap">
-        <button class="btn btn-primary ms-2 my-2"><a class="text-decoration-none text-white" href=${source} target="_blank">source</a></button>
-        <button class="btn btn-danger ms-2 my-2"><a class="text-decoration-none text-white" href=${youtube} target="_blank">youtube</a></button>
-        </div>
-        </div>
-    
-    `;
-    $(".loaderPage").fadeOut(1000);
 }
 // **********************************
 
@@ -884,96 +632,99 @@ async function searchIngrediantmeals(ingrediantName) {
   console.log(response);
   return response;
 }
-function displayIngrediantMeals(response) {
-    $(".loaderPage").show();
-  let cartona = "";
-  for (let i = 0; i < response.meals.length; i++) {
-    if (i === 20) {
-      break;
-    }
+// ************************************
 
-    cartona += `
-    <div class="col-md-4 col-lg-3">
-    <div class="ingrediant-cont position-relative overflow-hidden rounded-3">
-    <div class="overlay">
-    <h3 class="text-black mb-2">${response.meals[i].strMeal}</h3>
-    </div>
-    <img class="w-100 h-100" src=${response.meals[i].strMealThumb}>
-    </div>
-    </div>
-    `;
+// display meals
+function displayMeals(response,displayE) {
+  $(".loaderPage").show();
+let cartona = "";
+for (let i = 0; i < response.meals.length; i++) {
+  if (i === 20) {
+    break;
   }
-  allIngrediants.innerHTML = cartona;
+
+  cartona += `
+<div class="col-md-4 col-lg-3">
+<div class="category-cont position-relative overflow-hidden rounded-3">
+<div class="overlay">
+<h3 class="text-black mb-2">${response.meals[i].strMeal}</h3>
+</div>
+<img class="w-100 h-100" src=${response.meals[i].strMealThumb}>
+</div>
+</div>
+`;
+}
+displayE.innerHTML = cartona;
+$(".loaderPage").fadeOut(1000);
+}
+// display meal details
+function displayDetails(response,displayE) {
+  $(".loaderPage").show();
+let src = response.strMealThumb;
+let targetName = response.strMeal;
+let instructions = response.strInstructions;
+let area = response.strArea;
+let category = response.strCategory;
+let ingrediantArr = [];
+let measurmentArr = [];
+let tags = response.strTags;
+let source = response.strSource;
+let youtube = response.strYoutube;
+
+// adding all ingrediants in an array
+for (let i = 0; i < 20; i++) {
+  if (response[`strIngredient${i + 1}`] === "") {
+    break;
+  }
+  ingrediantArr.push(response[`strIngredient${i + 1}`]);
+}
+for (let i = 0; i < 20; i++) {
+  if (response[`strMeasure${i + 1}`] === "") {
+    break;
+  }
+  measurmentArr.push(response[`strMeasure${i + 1}`]);
+}
+
+displayE.innerHTML = `
+  <div class="col-12 col-md-5 text-white">
+      <div class="selectedImage">
+      <img class="w-100 rounded-3" src=${src}>
+      </div>
+      <h3>${targetName}</h3>
+      </div>
+      <div class="col-12 col-md-7 text-white">
+      <h3>Instructions</h3>
+      <p>${instructions}</p>
+      <h4>Area:${area}</h4>
+      <h5>Category:${category}</h5>
+      <h5>Recipes :</h5>
+      <div class="recips p-2 ">
+      <ul class="d-flex flex-wrap justify-content-start align-items-center list-unstyled">${ingrediantArr
+        .map((e, index) => {
+          return `<li class="bg-info p-2 my-3 mx-2 rounded-4 text-center">${measurmentArr[index]}${e}</li>`;
+        })
+        .join("")}
+      </ul>
+      </div>
+      <p>tags:</p>
+      <p>
+      ${
+          tags
+            ? tags
+                .split(",")
+                .map((e) => {
+                  return `<p class="fit-content rounded-2 bg-danger-subtle px-2 py-1 ms-2 text-black">${e}</p>`;
+                })
+                .join(" ")
+            : ""
+        }
+      </p>
+      <div class="d-flex justify-content-start flex-wrap flex-sm-nowrap">
+      <button class="btn btn-primary ms-2 my-2"><a class="text-decoration-none text-white" href=${source} target="_blank">source</a></button>
+      <button class="btn btn-danger ms-2 my-2"><a class="text-decoration-none text-white" href=${youtube} target="_blank">youtube</a></button>
+      </div>
+      </div>
+  
+  `;
   $(".loaderPage").fadeOut(1000);
 }
-
-function displayCertainIngrediantMeal(response) {
-    $(".loaderPage").show();
-  let src = response.strMealThumb;
-  let targetName = response.strMeal;
-  let instructions = response.strInstructions;
-  let area = response.strArea;
-  let category = response.strCategory;
-  let ingrediantArr = [];
-  let measurmentArr = [];
-  let tags = response.strTags;
-  let source = response.strSource;
-  let youtube = response.strYoutube;
-
-  // adding all ingrediants in an array
-  for (let i = 0; i < 20; i++) {
-    if (response[`strIngredient${i + 1}`] === "") {
-      break;
-    }
-    ingrediantArr.push(response[`strIngredient${i + 1}`]);
-  }
-
-  for (let i = 0; i < 20; i++) {
-    if (response[`strMeasure${i + 1}`] === "") {
-      break;
-    }
-    measurmentArr.push(response[`strMeasure${i + 1}`]);
-  }
-  allIngrediants.innerHTML = `
-            <div class="col-12 col-md-5 text-white">
-                <div class="selectedImage">
-                <img class="w-100 rounded-3" src=${src}>
-                </div>
-                <h3>${targetName}</h3>
-                </div>
-                <div class="col-12 col-md-7 text-white">
-                <h3>Instructions</h3>
-                <p>${instructions}</p>
-                <h4>Area:${area}</h4>
-                <h5>Category:${category}</h5>
-                <h5>Recipes :</h5>
-                <div class="recips p-2">
-                <ul class="d-flex flex-wrap ms justify-content-start align-items-center list-unstyled">${ingrediantArr
-                  .map((e, index) => {
-                    return `<li class="bg-info p-2 my-3 ms-2 rounded-4 text-center">${measurmentArr[index]}${e}</li>`;
-                  })
-                  .join("")}
-                </ul>
-                </div>
-                <p>tags:</p>
-                <p>
-                ${
-                    tags
-                      ? tags
-                          .split(",")
-                          .map((e) => {
-                            return `<p class="fit-content rounded-2 bg-danger-subtle px-2 py-1 ms-2 text-black">${e}</p>`;
-                          })
-                          .join(" ")
-                      : ""
-                  }
-                </p>
-                <div class="d-flex justify-content-start flex-wrap flex-sm-nowrap">
-                <button class="btn btn-primary ms-2 my-2"><a class="text-decoration-none text-white" href=${source} target="_blank">source</a></button>
-                <button class="btn btn-danger ms-2 my-2"><a class="text-decoration-none text-white" href=${youtube} target="_blank">youtube</a></button>
-                </div>
-                </div>
-            `;
-            $(".loaderPage").fadeOut(1000);
-}
-// ************************************
