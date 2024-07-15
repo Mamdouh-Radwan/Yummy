@@ -196,9 +196,8 @@ $(".nav-list").on("click", (e) => {
         .addEventListener("input", async (e) => {
           let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',e.target.value);
           document.querySelector(".searched-meals").innerHTML = "";
-          displayFoundedMealsSearch(response, searchedMeals);
-
-          Array.from(document.querySelectorAll(".searched-meal-cont")).forEach(
+          displayMealsSearch(response, searchedMeals, 'search');
+          Array.from(document.querySelectorAll(".search-cont")).forEach(
             (e) => {
               e.addEventListener("click", async (e) => {
                 let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',
@@ -217,12 +216,10 @@ $(".nav-list").on("click", (e) => {
           if (e.target.value.length > 1) {
             e.target.value = e.target.value.charAt(0);
           }
-
           let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?f=', e.target.value);
           document.querySelector(".searched-meals").innerHTML = "";
-          displayFoundedMealsSearch(response, searchedMeals);
-
-          Array.from(document.querySelectorAll(".searched-meal-cont")).forEach(
+          displayMealsSearch(response, searchedMeals, 'search');
+          Array.from(document.querySelectorAll(".search-cont")).forEach(
             (e) => {
               e.addEventListener("click", async (e) => {
                 let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',
@@ -245,7 +242,7 @@ $(".nav-list").on("click", (e) => {
         // iterate over all categories and display the selected category meals
         Array.from(document.querySelectorAll(".category-cont")).forEach((e) => {
           e.addEventListener("click", async (e) => {
-            let response = await searchCatMeals(
+            let response = await getResponse('https://www.themealdb.com/api/json/v1/1/filter.php?c=',
               e.currentTarget.children[0].children[0].innerHTML
             );
             displayMeals(response, allCategories, 'category');
@@ -267,7 +264,6 @@ $(".nav-list").on("click", (e) => {
       break;
     case "Area":
       displayTap(e);
-
       (async () => {
         let response = await getResponse("https://www.themealdb.com/api/json/v1/1/list.php?a=list");
         dispalyAreas(response.meals);
@@ -275,7 +271,7 @@ $(".nav-list").on("click", (e) => {
         Array.from(document.querySelectorAll(".area-cont")).forEach((e) => {
           e.addEventListener("click", async (e) => {
             // get meals in selected area
-            let response = await searchAreaMeals(
+            let response = await getResponse('https://www.themealdb.com/api/json/v1/1/filter.php?a=',
               e.currentTarget.children[1].innerHTML
             );
             // display all meals in this area
@@ -298,11 +294,10 @@ $(".nav-list").on("click", (e) => {
       (async () => {
         let response = await getResponse(`https://www.themealdb.com/api/json/v1/1/list.php?i=list`);
         dispalyIngrediants(response.meals);
-
         Array.from(document.querySelectorAll(".ingrediant-cont")).forEach(
           (e) => {
             e.addEventListener("click", async (e) => {
-              let response = await searchIngrediantmeals(
+              let response = await getResponse('https://www.themealdb.com/api/json/v1/1/filter.php?i=',
                 e.currentTarget.children[1].innerHTML
               );
               displayMeals(response, allIngrediants, 'ingrediant');
@@ -468,21 +463,20 @@ function displayTap(e) {
 }
 
 // search tab
-function displayFoundedMealsSearch(response, displayE) {
+function displayMealsSearch(response, displayE, cssClass) {
   $(".loaderPage").show();
   let cartona = "";
   response.meals.forEach((e) => {
     cartona += `
-  <div class="col-md-4 col-lg-3">
-        <div class="searched-meal-cont overflow-hidden position-relative rounded-3">
-            <div class="overlay position-absolute d-flex align-items-center justify-content-center">
-            <h3 class="text-black">${e.strMeal}</h3>
-            </div>
-            <img class="w-100" src=${e.strMealThumb}>
-        </div>
-    </div>
-  
-  `;
+<div class="col-md-4 col-lg-3">
+<div class="${cssClass}-cont position-relative overflow-hidden rounded-3">
+<div class="overlay d-flex justify-content-center align-items-center">
+<h3 class="text-black mb-2">${e.strMeal}</h3>
+</div>
+<img class="w-100 h-100" src=${e.strMealThumb}>
+</div>
+</div>
+`;
   });
   displayE.innerHTML = cartona;
   $(".loaderPage").fadeOut(1000);
@@ -509,13 +503,6 @@ function displayCategories(response) {
   allCategories.innerHTML = cartona;
   $(".loaderPage").fadeOut(1000);
 }
-async function searchCatMeals(catName) {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/filter.php?c=${catName}`
-  );
-  response = await response.json();
-  return response;
-}
 // **********************************
 
 // area tab
@@ -536,13 +523,6 @@ function dispalyAreas(response) {
   });
   allArea.innerHTML = cartona;
   $(".loaderPage").fadeOut(1000);
-}
-async function searchAreaMeals(areaName) {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/filter.php?a=${areaName}`
-  );
-  response = await response.json();
-  return response;
 }
 // **********************************
 
@@ -569,17 +549,10 @@ function dispalyIngrediants(response) {
   allIngrediants.innerHTML = cartona;
   $(".loaderPage").fadeOut(1000);
 }
-async function searchIngrediantmeals(ingrediantName) {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingrediantName}`
-  );
-  response = await response.json();
-  return response;
-}
 // ************************************
 
 // display meals
-function displayMeals(response, displayE, cssClass) {
+function displayMeals(response, displayE, cssClass='') {
   $(".loaderPage").show();
   let cartona = "";
   for (let i = 0; i < response.meals.length; i++) {
@@ -590,7 +563,7 @@ function displayMeals(response, displayE, cssClass) {
     cartona += `
 <div class="col-md-4 col-lg-3">
 <div class="${cssClass}-cont position-relative overflow-hidden rounded-3">
-<div class="overlay">
+<div class="overlay d-flex justify-content-center align-items-center">
 <h3 class="text-black mb-2">${response.meals[i].strMeal}</h3>
 </div>
 <img class="w-100 h-100" src=${response.meals[i].strMealThumb}>

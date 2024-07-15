@@ -77,11 +77,11 @@ max-width: 250px;
   }
 /* end search */
 /* start category */
-.category-cont,.area-cont,.ingrediant-cont{
+.search-cont, .category-cont,.area-cont,.ingrediant-cont{
 cursor: pointer;
 }
 
-.category-cont .overlay , .area-cont .overlay,.ingrediant-cont .overlay{
+.search-cont .overlay, .category-cont .overlay , .area-cont .overlay,.ingrediant-cont .overlay{
     position: absolute;
     width: 100%;
     height: 100%;
@@ -102,6 +102,9 @@ cursor: pointer;
   top: 0;
 }
 .ingrediant-cont:hover .overlay{
+  top: 0;
+}
+.search-cont:hover .overlay{
   top: 0;
 }
 /* end category */
