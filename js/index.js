@@ -1,7 +1,7 @@
 // DOM vars
 let navLinks = document.querySelectorAll(".nav-links");
 let homeMealsDisplay = $(".home-meals");
-let mealsArr=[];
+let mealsArr = [];
 let pages = document.querySelectorAll(".page");
 let navLists = document.querySelectorAll(".nav-list a");
 let allCategories = document.querySelector(".all-categories");
@@ -29,78 +29,78 @@ function validations() {
           userName.addEventListener("input", (e) => {
             let errorMsgEle = e.target.nextElementSibling;
             errorMsgEle.classList.remove("d-none");
-            userName.classList.add('is-invalid')
-            userName.classList.remove('is-valid')
-            if(userNameValidation() === true){
-                errorMsgEle.classList.add("d-none")
-                userName.classList.remove('is-invalid')
-                userName.classList.add('is-valid')
-            };
+            userName.classList.add("is-invalid");
+            userName.classList.remove("is-valid");
+            if (userNameValidation() === true) {
+              errorMsgEle.classList.add("d-none");
+              userName.classList.remove("is-invalid");
+              userName.classList.add("is-valid");
+            }
           });
           break;
         case "userMail":
           userEmail.addEventListener("input", (e) => {
             let errorMsgEle = e.target.nextElementSibling;
             errorMsgEle.classList.remove("d-none");
-            userEmail.classList.add('is-invalid')
-            userEmail.classList.remove('is-valid')
-            if(userEmailValidation() === true){
-                errorMsgEle.classList.add("d-none")
-                userEmail.classList.remove('is-invalid')
-                userEmail.classList.add('is-valid')
-            };
+            userEmail.classList.add("is-invalid");
+            userEmail.classList.remove("is-valid");
+            if (userEmailValidation() === true) {
+              errorMsgEle.classList.add("d-none");
+              userEmail.classList.remove("is-invalid");
+              userEmail.classList.add("is-valid");
+            }
           });
           break;
         case "userPhone":
           userPhone.addEventListener("input", (e) => {
             let errorMsgEle = e.target.nextElementSibling;
             errorMsgEle.classList.remove("d-none");
-            userPhone.classList.add('is-invalid')
-            userPhone.classList.remove('is-valid')
-            if(userPhoneValidation() === true){
-                errorMsgEle.classList.add("d-none")
-                userPhone.classList.remove('is-invalid')
-                userPhone.classList.add('is-valid')
-            };
+            userPhone.classList.add("is-invalid");
+            userPhone.classList.remove("is-valid");
+            if (userPhoneValidation() === true) {
+              errorMsgEle.classList.add("d-none");
+              userPhone.classList.remove("is-invalid");
+              userPhone.classList.add("is-valid");
+            }
           });
           break;
         case "age":
           userAge.addEventListener("input", (e) => {
             let errorMsgEle = e.target.nextElementSibling;
             errorMsgEle.classList.remove("d-none");
-            userAge.classList.add('is-invalid')
-            userAge.classList.remove('is-valid')
-            if(userAgeValidation() === true){
-                errorMsgEle.classList.add("d-none")
-                userAge.classList.remove('is-invalid')
-                userAge.classList.add('is-valid')
-            };
+            userAge.classList.add("is-invalid");
+            userAge.classList.remove("is-valid");
+            if (userAgeValidation() === true) {
+              errorMsgEle.classList.add("d-none");
+              userAge.classList.remove("is-invalid");
+              userAge.classList.add("is-valid");
+            }
           });
           break;
         case "userPass":
           userPass.addEventListener("input", (e) => {
             let errorMsgEle = e.target.nextElementSibling;
             errorMsgEle.classList.remove("d-none");
-            userPass.classList.add('is-invalid')
-            userPass.classList.remove('is-valid')
-            if(userPassValidation() === true){
-                errorMsgEle.classList.add("d-none")
-                userPass.classList.remove('is-invalid')
-                userPass.classList.add('is-valid')
-            };
+            userPass.classList.add("is-invalid");
+            userPass.classList.remove("is-valid");
+            if (userPassValidation() === true) {
+              errorMsgEle.classList.add("d-none");
+              userPass.classList.remove("is-invalid");
+              userPass.classList.add("is-valid");
+            }
           });
           break;
         case "userRePass":
           userRePass.addEventListener("input", (e) => {
             let errorMsgEle = e.target.nextElementSibling;
             errorMsgEle.classList.remove("d-none");
-            userRePass.classList.add('is-invalid')
-            userRePass.classList.remove('is-valid')
-            if(userRePassValidation() === true){
-                errorMsgEle.classList.add("d-none")
-                userRePass.classList.remove('is-invalid')
-                userRePass.classList.add('is-valid')
-            };
+            userRePass.classList.add("is-invalid");
+            userRePass.classList.remove("is-valid");
+            if (userRePassValidation() === true) {
+              errorMsgEle.classList.add("d-none");
+              userRePass.classList.remove("is-invalid");
+              userRePass.classList.add("is-valid");
+            }
           });
           break;
 
@@ -142,11 +142,9 @@ function userRePassValidation() {
 
 // loading page
 $(document).ready(() => {
-  
-    $(".loaderPage").fadeOut(1000, () => {
-      $("body").css({ overflow: "auto" });
-    });
-  
+  $(".loaderPage").fadeOut(1000, () => {
+    $("body").css({ overflow: "auto" });
+  });
 });
 //   *****************************************
 
@@ -196,41 +194,41 @@ $(".nav-list").on("click", (e) => {
       document
         .getElementById("search-by-name")
         .addEventListener("input", async (e) => {
-          let response = await searchApi(e.target.value);
+          let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',e.target.value);
           document.querySelector(".searched-meals").innerHTML = "";
-          displayFoundedMealsSearch(response,searchedMeals);
+          displayFoundedMealsSearch(response, searchedMeals);
 
           Array.from(document.querySelectorAll(".searched-meal-cont")).forEach(
             (e) => {
               e.addEventListener("click", async (e) => {
-                let response = await getHomeMeals(
+                let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',
                   e.currentTarget.children[0].children[0].innerHTML
                 );
-                displayDetails(response[0],searchedMeals);
+                displayDetails(response.meals[0], searchedMeals);
               });
             }
           );
         });
 
       document
-        .getElementById("search-by-fName")
+        .getElementById("search-by-fLetter")
         .addEventListener("input", async (e) => {
           // panning user from writting more than one letter
           if (e.target.value.length > 1) {
             e.target.value = e.target.value.charAt(0);
           }
 
-          let response = await searchApiFL(e.target.value);
+          let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?f=', e.target.value);
           document.querySelector(".searched-meals").innerHTML = "";
-          displayFoundedMealsSearch(response,searchedMeals);
+          displayFoundedMealsSearch(response, searchedMeals);
 
           Array.from(document.querySelectorAll(".searched-meal-cont")).forEach(
             (e) => {
               e.addEventListener("click", async (e) => {
-                let response = await getHomeMeals(
+                let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',
                   e.currentTarget.children[0].children[0].innerHTML
                 );
-                displayDetails(response[0],searchedMeals);
+                displayDetails(response.meals[0], searchedMeals);
               });
             }
           );
@@ -242,7 +240,7 @@ $(".nav-list").on("click", (e) => {
       displayTap(e);
       // get and display categories
       (async () => {
-        let response = await searchCatApi();
+        let response = await getResponse(`https://www.themealdb.com/api/json/v1/1/categories.php`);
         displayCategories(response);
         // iterate over all categories and display the selected category meals
         Array.from(document.querySelectorAll(".category-cont")).forEach((e) => {
@@ -250,15 +248,15 @@ $(".nav-list").on("click", (e) => {
             let response = await searchCatMeals(
               e.currentTarget.children[0].children[0].innerHTML
             );
-            displayMeals(response,allCategories);
+            displayMeals(response, allCategories, 'category');
             // loop on all meals of same category if meal clicked fetch it and display its details
             Array.from(document.querySelectorAll(".category-cont")).forEach(
               (e) => {
                 e.addEventListener("click", async (e) => {
-                  let response = await getHomeMeals(
+                  let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',
                     e.currentTarget.children[0].children[0].innerHTML
                   );
-                  displayDetails(response[0],allCategories);
+                  displayDetails(response.meals[0], allCategories);
                 });
               }
             );
@@ -271,8 +269,8 @@ $(".nav-list").on("click", (e) => {
       displayTap(e);
 
       (async () => {
-        let response = await searchAreaApi();
-        dispalyAreas(response);
+        let response = await getResponse("https://www.themealdb.com/api/json/v1/1/list.php?a=list");
+        dispalyAreas(response.meals);
         // iterate over all areas and display selected area meals
         Array.from(document.querySelectorAll(".area-cont")).forEach((e) => {
           e.addEventListener("click", async (e) => {
@@ -281,13 +279,13 @@ $(".nav-list").on("click", (e) => {
               e.currentTarget.children[1].innerHTML
             );
             // display all meals in this area
-            displayMeals(response,allCategories);
+            displayMeals(response, allArea, 'area');
             Array.from(document.querySelectorAll(".area-cont")).forEach((e) => {
               e.addEventListener("click", async (e) => {
-                let response = await getHomeMeals(
+                let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',
                   e.currentTarget.children[0].children[0].innerHTML
                 );
-                displayDetails(response[0],allArea);
+                displayDetails(response.meals[0], allArea);
               });
             });
           });
@@ -298,8 +296,8 @@ $(".nav-list").on("click", (e) => {
     case "Ingrediants":
       displayTap(e);
       (async () => {
-        let response = await searchIngrediantApi();
-        dispalyIngrediants(response);
+        let response = await getResponse(`https://www.themealdb.com/api/json/v1/1/list.php?i=list`);
+        dispalyIngrediants(response.meals);
 
         Array.from(document.querySelectorAll(".ingrediant-cont")).forEach(
           (e) => {
@@ -307,14 +305,14 @@ $(".nav-list").on("click", (e) => {
               let response = await searchIngrediantmeals(
                 e.currentTarget.children[1].innerHTML
               );
-              displayMeals(response,allCategories);
+              displayMeals(response, allIngrediants, 'ingrediant');
               Array.from(document.querySelectorAll(".ingrediant-cont")).forEach(
                 (e) => {
                   e.addEventListener("click", async (e) => {
-                    let response = await getHomeMeals(
+                    let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=',
                       e.currentTarget.children[0].children[0].innerHTML
                     );
-                    displayDetails(response[0],allIngrediants);
+                    displayDetails(response.meals[0], allIngrediants);
                   });
                 }
               );
@@ -352,20 +350,10 @@ $(".nav-list").on("click", (e) => {
 displayHomeMeals();
 // *******************************************
 
-// getting home page meals
-async function getHomeMeals(mealName='') {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/search.php?s=${mealName}`
-  );
-  response = await response.json();
-  response = response.meals;
-  return response;
-}
-// *******************************************
-
 // displaying home page meals
 async function displayHomeMeals() {
-  mealsArr = await getHomeMeals();
+  let response = await getResponse('https://www.themealdb.com/api/json/v1/1/search.php?s=');
+  mealsArr = response.meals
   let cartona = "";
   for (let i = 0; i < mealsArr.length; i++) {
     cartona += ` <div class="col-md-4 col-lg-3">
@@ -389,7 +377,7 @@ async function displayHomeMeals() {
 }
 // *******************************************
 
-// Display meal details
+// Display meal details for home (USING FOR--OF Training for me)
 function diplaySelectedMeal(targetName, src) {
   $(".loaderPage").show();
   let area;
@@ -422,7 +410,7 @@ function diplaySelectedMeal(targetName, src) {
     }
   }
 
-  let mealDetails =$(".meal-details");
+  let mealDetails = $(".meal-details");
   mealDetails.removeClass("d-none");
   homeMealsDisplay.addClass("d-none");
   mealDetails.children().html(` 
@@ -468,38 +456,20 @@ function diplaySelectedMeal(targetName, src) {
 }
 // *******************************************
 
-
-
 function displayTap(e) {
-    $(".loaderPage").show();
+  $(".loaderPage").show();
   pages.forEach((e) => {
     e.classList.add("d-none");
   });
   document
     .getElementById(e.target.getAttribute("-page-id"))
     .classList.remove("d-none");
-    $(".loaderPage").fadeOut(1000);
+  $(".loaderPage").fadeOut(1000);
 }
-
 
 // search tab
-async function searchApi(name) {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/search.php?s=${name}`
-  );
-  response = await response.json();
-  return response;
-}
-async function searchApiFL(letter) {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`
-  );
-
-  response = await response.json();
-  return response;
-}
-function displayFoundedMealsSearch(response,displayE) {
-    $(".loaderPage").show();
+function displayFoundedMealsSearch(response, displayE) {
+  $(".loaderPage").show();
   let cartona = "";
   response.meals.forEach((e) => {
     cartona += `
@@ -514,25 +484,17 @@ function displayFoundedMealsSearch(response,displayE) {
   
   `;
   });
-  displayE.innerHTML =cartona
+  displayE.innerHTML = cartona;
   $(".loaderPage").fadeOut(1000);
 }
-
 // *******************************************
 
 // category tab
-async function searchCatApi() {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/categories.php`
-  );
-  response = await response.json();
-  return response;
-}
 function displayCategories(response) {
-    $(".loaderPage").show();
+  $(".loaderPage").show();
   let cartona = "";
   response.categories.forEach((e) => {
-    cartona+= `
+    cartona += `
 <div class="col-md-4 col-lg-3">
 <div class="category-cont position-relative overflow-hidden rounded-3">
 <div class="overlay py-3">
@@ -557,17 +519,9 @@ async function searchCatMeals(catName) {
 // **********************************
 
 // area tab
-async function searchAreaApi() {
-  let response = await fetch(
-    "https://www.themealdb.com/api/json/v1/1/list.php?a=list"
-  );
-  response = await response.json();
-  console.log(response.meals);
-  return response.meals;
-}
 function dispalyAreas(response) {
-    $(".loaderPage").show();
- let cartona = "";
+  $(".loaderPage").show();
+  let cartona = "";
   response.forEach((e) => {
     cartona += `
 <div class="col-md-4 col-lg-3 flex-column">
@@ -580,7 +534,7 @@ function dispalyAreas(response) {
 </div>
 `;
   });
-  allArea.innerHTML = cartona
+  allArea.innerHTML = cartona;
   $(".loaderPage").fadeOut(1000);
 }
 async function searchAreaMeals(areaName) {
@@ -588,22 +542,13 @@ async function searchAreaMeals(areaName) {
     `https://www.themealdb.com/api/json/v1/1/filter.php?a=${areaName}`
   );
   response = await response.json();
-  console.log(response);
   return response;
 }
 // **********************************
 
 // ingrediants tab
-async function searchIngrediantApi() {
-  let response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/list.php?i=list`
-  );
-  response = await response.json();
-  console.log(response.meals);
-  return response.meals;
-}
 function dispalyIngrediants(response) {
-    $(".loaderPage").show();
+  $(".loaderPage").show();
   let cartona = "";
   for (let i = 0; i < 20; i++) {
     cartona += `
@@ -629,23 +574,22 @@ async function searchIngrediantmeals(ingrediantName) {
     `https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingrediantName}`
   );
   response = await response.json();
-  console.log(response);
   return response;
 }
 // ************************************
 
 // display meals
-function displayMeals(response,displayE) {
+function displayMeals(response, displayE, cssClass) {
   $(".loaderPage").show();
-let cartona = "";
-for (let i = 0; i < response.meals.length; i++) {
-  if (i === 20) {
-    break;
-  }
+  let cartona = "";
+  for (let i = 0; i < response.meals.length; i++) {
+    if (i === 20) {
+      break;
+    }
 
-  cartona += `
+    cartona += `
 <div class="col-md-4 col-lg-3">
-<div class="category-cont position-relative overflow-hidden rounded-3">
+<div class="${cssClass}-cont position-relative overflow-hidden rounded-3">
 <div class="overlay">
 <h3 class="text-black mb-2">${response.meals[i].strMeal}</h3>
 </div>
@@ -653,39 +597,39 @@ for (let i = 0; i < response.meals.length; i++) {
 </div>
 </div>
 `;
-}
-displayE.innerHTML = cartona;
-$(".loaderPage").fadeOut(1000);
+  }
+  displayE.innerHTML = cartona;
+  $(".loaderPage").fadeOut(1000);
 }
 // display meal details
-function displayDetails(response,displayE) {
+function displayDetails(response, displayE) {
   $(".loaderPage").show();
-let src = response.strMealThumb;
-let targetName = response.strMeal;
-let instructions = response.strInstructions;
-let area = response.strArea;
-let category = response.strCategory;
-let ingrediantArr = [];
-let measurmentArr = [];
-let tags = response.strTags;
-let source = response.strSource;
-let youtube = response.strYoutube;
+  let src = response.strMealThumb;
+  let targetName = response.strMeal;
+  let instructions = response.strInstructions;
+  let area = response.strArea;
+  let category = response.strCategory;
+  let ingrediantArr = [];
+  let measurmentArr = [];
+  let tags = response.strTags;
+  let source = response.strSource;
+  let youtube = response.strYoutube;
 
-// adding all ingrediants in an array
-for (let i = 0; i < 20; i++) {
-  if (response[`strIngredient${i + 1}`] === "") {
-    break;
+  // adding all ingrediants in an array
+  for (let i = 0; i < 20; i++) {
+    if (response[`strIngredient${i + 1}`] === "") {
+      break;
+    }
+    ingrediantArr.push(response[`strIngredient${i + 1}`]);
   }
-  ingrediantArr.push(response[`strIngredient${i + 1}`]);
-}
-for (let i = 0; i < 20; i++) {
-  if (response[`strMeasure${i + 1}`] === "") {
-    break;
+  for (let i = 0; i < 20; i++) {
+    if (response[`strMeasure${i + 1}`] === "") {
+      break;
+    }
+    measurmentArr.push(response[`strMeasure${i + 1}`]);
   }
-  measurmentArr.push(response[`strMeasure${i + 1}`]);
-}
 
-displayE.innerHTML = `
+  displayE.innerHTML = `
   <div class="col-12 col-md-5 text-white">
       <div class="selectedImage">
       <img class="w-100 rounded-3" src=${src}>
@@ -709,15 +653,15 @@ displayE.innerHTML = `
       <p>tags:</p>
       <p>
       ${
-          tags
-            ? tags
-                .split(",")
-                .map((e) => {
-                  return `<p class="fit-content rounded-2 bg-danger-subtle px-2 py-1 ms-2 text-black">${e}</p>`;
-                })
-                .join(" ")
-            : ""
-        }
+        tags
+          ? tags
+              .split(",")
+              .map((e) => {
+                return `<p class="fit-content rounded-2 bg-danger-subtle px-2 py-1 ms-2 text-black">${e}</p>`;
+              })
+              .join(" ")
+          : ""
+      }
       </p>
       <div class="d-flex justify-content-start flex-wrap flex-sm-nowrap">
       <button class="btn btn-primary ms-2 my-2"><a class="text-decoration-none text-white" href=${source} target="_blank">source</a></button>
@@ -727,4 +671,10 @@ displayE.innerHTML = `
   
   `;
   $(".loaderPage").fadeOut(1000);
+}
+// get response for api url
+async function getResponse(url, key = "") {
+  let response = await fetch(`${url}${key}`);
+  response = await response.json();
+  return response;
 }
